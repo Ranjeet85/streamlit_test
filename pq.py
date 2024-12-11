@@ -12,7 +12,7 @@ BUCKET_NAME = "mytestbucket3publiq"
 AWS_ACCESS_KEY_ID = st.secrets["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = st.secrets["AWS_SECRET_ACCESS_KEY"]
 REGION = "ap-south-1"
-API_KEY = "API_KEY"
+API_KEY = "fa-yQpYjjCTyXod-yVAfDrMWezBkazt4cgOxR0Ev"
 
 # Set Replicate API Token - Get from Streamlit secrets
 os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
@@ -178,7 +178,7 @@ if category == "Apparel":
         options=MODEL_IMAGE_URLS,
         format_func=lambda url: f"Model Image ({MODEL_IMAGE_URLS.index(url) + 1})",
     )
-    st.image(selected_model_url, caption="Selected Model Image", use_container_width=True)
+    st.image(selected_model_url, caption="Selected Model Image", use_column_width=True)
 
     # Step 2.3: Category selection
     category = st.selectbox("Select Garment Category", ["tops", "bottoms", "one-pieces"])
@@ -210,7 +210,7 @@ if category == "Apparel":
                                 if prediction_status == "completed":
                                     output_image_url = status_response["output"][0]
                                     st.success("Prediction completed!")
-                                    st.image(output_image_url, caption="Predicted Image", uuse_container_width=True)
+                                    st.image(output_image_url, caption="Predicted Image", use_column_width=True)
                                     break
                                 elif prediction_status == "failed":
                                     st.error("Prediction failed!")
@@ -255,5 +255,17 @@ elif category != "Select":
                 prompt = prompt_map[lighting_effect]
                 output = generate_lighting_effect(image_url, prompt)
                 if output:
-                    st.image(output, caption="Styled Image", use_container_width=True)
+                    # Check if output is in raw binary format or a FileOutput object
+                    if isinstance(output, bytes):
+                        # Convert binary to image
+                        image = Image.open(io.BytesIO(output))
+                        st.image(image, caption="Styled Image", use_container_width=True)
+                    elif isinstance(output, str):  # URL case
+                        st.image(output, caption="Styled Image", use_container_width=True)
+                    elif hasattr(output, 'read'):  # File-like object (FileOutput)
+                        # If output is a file-like object, read the image and display it
+                        image = Image.open(output)
+                        st.image(image, caption="Styled Image", use_container_width=True)
+                    else:
+                        st.error("Unsupported image format.")
 
