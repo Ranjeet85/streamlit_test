@@ -178,7 +178,7 @@ if category == "Apparel":
         options=MODEL_IMAGE_URLS,
         format_func=lambda url: f"Model Image ({MODEL_IMAGE_URLS.index(url) + 1})",
     )
-    st.image(selected_model_url, caption="Selected Model Image", use_column_width=True)
+    st.image(selected_model_url, caption="Selected Model Image", use_container_width=True)
 
     # Step 2.3: Category selection
     category = st.selectbox("Select Garment Category", ["tops", "bottoms", "one-pieces"])
@@ -210,7 +210,7 @@ if category == "Apparel":
                                 if prediction_status == "completed":
                                     output_image_url = status_response["output"][0]
                                     st.success("Prediction completed!")
-                                    st.image(output_image_url, caption="Predicted Image", use_column_width=True)
+                                    st.image(output_image_url, caption="Predicted Image", uuse_container_width=True)
                                     break
                                 elif prediction_status == "failed":
                                     st.error("Prediction failed!")
@@ -255,4 +255,5 @@ elif category != "Select":
                 prompt = prompt_map[lighting_effect]
                 output = generate_lighting_effect(image_url, prompt)
                 if output:
-                    st.image(output, caption="Styled Image", use_column_width=True)
+                    st.image(output, caption="Styled Image", use_container_width=True)
+
